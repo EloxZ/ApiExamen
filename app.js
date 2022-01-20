@@ -75,7 +75,7 @@ function authorizeRequest(req, res, next) {
 
 	return app.oauth.authorize(request, response)
 		.then(function(token) {
-
+			res.json(token);
 			next();
 		}).catch(function(err) {
 
