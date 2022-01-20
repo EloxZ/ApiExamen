@@ -1,7 +1,12 @@
 const express = require('express');
 const app = express(); 
+const bodyParser = require('body-parser'); 
 const port = process.env.PORT || 3000;
 const https = require('https');
+var mongoose = require('mongoose');
+var OAuth2Server = require('oauth2-server');
+var Request = OAuth2Server.Request;
+var Response = OAuth2Server.Response;
 
 // This displays message that the server running and listening to specified port
 app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
@@ -20,8 +25,64 @@ app.use(express.json());
 //Configuracion de la base de datos mongo
 let mongo = require('mongodb');
 let gestorBD = require("./services/gestorBD");
+var mongoUrl = 'mongodb://root:root@cluster0-shard-00-00.xrhm0.mongodb.net:27017,cluster0-shard-00-01.xrhm0.mongodb.net:27017,cluster0-shard-00-02.xrhm0.mongodb.net:27017/ExamenEloy?ssl=true&replicaSet=atlas-i6aji1-shard-0&authSource=admin&retryWrites=true&w=majority';
 gestorBD.init(app, mongo);
-app.set('db', 'mongodb://root:root@cluster0-shard-00-00.xrhm0.mongodb.net:27017,cluster0-shard-00-01.xrhm0.mongodb.net:27017,cluster0-shard-00-02.xrhm0.mongodb.net:27017/ExamenEloy?ssl=true&replicaSet=atlas-i6aji1-shard-0&authSource=admin&retryWrites=true&w=majority');
+app.set('db', mongoUrl);
+
+mongoose.connect(mongoUrl, {
+    useUnifiedTopology: true,
+	useCreateIndex: true,
+	useNewUrlParser: true
+}, function(err, res) {
+
+	if (err) {
+		return console.error('Error connecting to "%s":', mongoUrl, err);
+	}
+	console.log('Connected successfully to "%s"', mongoUrl);
+});
+
+//OAuth
+app.oauth = new OAuth2Server({
+	model: require('./model.js'),
+	accessTokenLifetime: 60 * 60,
+	allowBearerTokensInQueryString: true
+});
+
+app.all('/oauth/token', obtainToken);
+
+app.get('/oauth/authenticate', authenticateRequest, function(req, res) {
+	res.send('Congratulations, you are in a secret area!');
+});
+
+function obtainToken(req, res) {
+
+	var request = new Request(req);
+	var response = new Response(res);
+
+	return app.oauth.token(request, response)
+		.then(function(token) {
+
+			res.json(token);
+		}).catch(function(err) {
+
+			res.status(err.code || 500).json(err);
+		});
+}
+
+function authenticateRequest(req, res, next) {
+
+	var request = new Request(req);
+	var response = new Response(res);
+
+	return app.oauth.authenticate(request, response)
+		.then(function(token) {
+
+			next();
+		}).catch(function(err) {
+
+			res.status(err.code || 500).json(err);
+		});
+}
 
 //Rutas/controladores por lógica
 require("./routes/users")(app, gestorBD);  // (app, param1, param2, etc.)
@@ -36,5 +97,4 @@ require("./routes/conversations")(app, gestorBD);
 app.get('*',function (req, res,next) {
     console.log("Error producido: ");
     res.send({ Error: { status: 404, data: "No se ha encontrado la pagina" } })
-    
 })

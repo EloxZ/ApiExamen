@@ -17,7 +17,9 @@
     "https": "^1.0.0",
     "mongodb": "2.2.33",
     "morgan": "^1.10.0",
-    "request": "^2.88.2"
+    "mongoose": "^5.7.5",
+    "request": "^2.88.2",
+    "oauth2-server": "^3.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.14"
