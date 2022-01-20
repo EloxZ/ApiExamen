@@ -19,7 +19,8 @@ app.set('views', path.join(__dirname, 'views')); // Para definir la ruta de las 
 
 // Middlewares
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 
 //Configuracion de la base de datos mongo
