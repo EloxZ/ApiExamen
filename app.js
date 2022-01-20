@@ -51,9 +51,7 @@ app.oauth = new OAuth2Server({
 
 app.all('/oauth/token', obtainToken);
 
-app.get('/oauth/auth', authenticateRequest, function(req, res) {
-	res.send('Congratulations, you are in a secret area!');
-});
+app.all('/oauth/auth', authorizeRequest);
 
 function obtainToken(req, res) {
 
@@ -64,6 +62,21 @@ function obtainToken(req, res) {
 		.then(function(token) {
 
 			res.json(token);
+		}).catch(function(err) {
+
+			res.status(err.code || 500).json(err);
+		});
+}
+
+function authorizeRequest(req, res, next) {
+
+	var request = new Request(req);
+	var response = new Response(res);
+
+	return app.oauth.authorize(request, response)
+		.then(function(token) {
+
+			next();
 		}).catch(function(err) {
 
 			res.status(err.code || 500).json(err);
