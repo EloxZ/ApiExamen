@@ -51,7 +51,7 @@ app.oauth = new OAuth2Server({
 
 app.all('/oauth/token', obtainToken);
 
-app.get('/oauth/authenticate', authenticateRequest, function(req, res) {
+app.get('/oauth/auth', authenticateRequest, function(req, res) {
 	res.send('Congratulations, you are in a secret area!');
 });
 
