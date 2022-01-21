@@ -50,7 +50,7 @@ app.oauth = new OAuth2Server({
 	allowBearerTokensInQueryString: true
 });
 
-app.post('/oauth/token', obtainToken);
+app.all('/oauth/token', obtainToken);
 
 app.all('/oauth/auth', authenticateRequest, function(req, res) {
 	res.send("Hola!");
@@ -64,7 +64,7 @@ function obtainToken(req, res) {
 	return app.oauth.token(request, response)
 		.then(function(token) {
 
-			res.send(token);
+			res.json(token);
 		}).catch(function(err) {
 
 			res.status(err.code || 500).json(err);
