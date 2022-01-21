@@ -63,7 +63,7 @@ function obtainToken(req, res) {
 	return app.oauth.token(request, response)
 		.then(function(token) {
 
-			res.json(token);
+			res.send(token);
 		}).catch(function(err) {
 
 			res.status(err.code || 500).json(err);
