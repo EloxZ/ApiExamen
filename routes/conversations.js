@@ -1,21 +1,7 @@
 const { query } = require("express");
 
-module.exports = function (app, gestorBD) {
+module.exports = function (app, gestorBD, authenticateRequest) {
 
-    function authenticateRequest(req, res, next) {
-
-        var request = new Request(req);
-        var response = new Response(res);
-    
-        return app.oauth.authenticate(request, response)
-            .then(function(token) {
-    
-                next();
-            }).catch(function(err) {
-    
-                res.status(err.code || 500).json(err);
-            });
-    }
     
     app.get('/conversacion', authenticateRequest, function(req, res) {
         
