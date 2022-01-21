@@ -51,7 +51,9 @@ app.oauth = new OAuth2Server({
 
 app.all('/oauth/token', obtainToken);
 
-app.all('/oauth/auth', authorizeRequest);
+app.all('/oauth/auth', authenticateRequest, function(req, res) {
+	res.send("Hola!");
+});
 
 function obtainToken(req, res) {
 
