@@ -2,7 +2,7 @@ const { query } = require("express");
 
 module.exports = function (app, gestorBD) {
     
-    app.get('/conversacion', authenticateRequest, function(req, res) {
+    app.get('/conversacion', fns.authenticateRequest, function(req, res) {
         
         let criterio = {$and: [{"participantes": req.query.id1}, {"participantes": req.query.id2}]};
         

@@ -56,7 +56,7 @@ app.get('/oauth/auth', authenticateRequest, function(req, res) {
 	res.send("Hola!");
 });
 
-function obtainToken(req, res) {
+var obtainToken = function obtainToken(req, res) {
 
 	var request = new Request(req);
 	var response = new Response(res);
@@ -71,7 +71,7 @@ function obtainToken(req, res) {
 		});
 }
 
-function authorizeRequest(req, res, next) {
+var authorizeRequest = function authorizeRequest(req, res, next) {
 
 	var request = new Request(req);
 	var response = new Response(res);
@@ -84,9 +84,9 @@ function authorizeRequest(req, res, next) {
 
 			res.status(err.code || 500).json(err);
 		});
-}
+};
 
-function authenticateRequest(req, res, next) {
+var authenticateRequest = function authenticateRequest(req, res, next) {
 
 	var request = new Request(req);
 	var response = new Response(res);
@@ -99,7 +99,9 @@ function authenticateRequest(req, res, next) {
 
 			res.status(err.code || 500).json(err);
 		});
-}
+};
+
+var fns = {obtainToken : obtainToken, authenticateRequest: authenticateRequest};
 
 //Rutas/controladores por lógica
 require("./routes/users")(app, gestorBD);  // (app, param1, param2, etc.)
