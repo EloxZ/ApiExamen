@@ -45,9 +45,10 @@ mongoose.connect(mongoUrl, {
 //OAuth
 app.oauth = new OAuth2Server({
 	model: require('./model.js'),
-	grants: ['password'],
+	grants: ['password', 'client_credentials'],
 	accessTokenLifetime: 60 * 60,
-	allowBearerTokensInQueryString: true
+	allowBearerTokensInQueryString: true,
+	debug: true
 });
 
 app.all('/oauth/token', obtainToken);
